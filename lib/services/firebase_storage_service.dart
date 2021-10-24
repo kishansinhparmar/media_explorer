@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:media_portfolio/services/firebase_auth_service.dart';
 import 'package:path_provider/path_provider.dart';
 
 class FirebaseStorageService {
@@ -18,15 +20,16 @@ class FirebaseStorageService {
     return null;
   }
 
-  Future<void> uploadFile(String filePath) async {
+  UploadTask? uploadFile(String filePath) {
     File file = File(filePath);
-
     try {
-      await firebase_storage.FirebaseStorage.instance
-          .ref('uploads/file-to-upload.png')
+      return firebase_storage.FirebaseStorage.instance
+          .ref(
+              '${FirebaseAuthService.instance.getUserUniqueId()}/raw-images/${FirebaseAuthService.instance.getUniqueFileName()}.png')
           .putFile(file);
     } on FirebaseException catch (e) {
       // e.g, e.code == 'canceled'
+      return null;
     }
   }
 }

@@ -1,8 +1,21 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseAuthService {
+  static final FirebaseAuthService _instance = FirebaseAuthService._internal();
+
+  FirebaseAuthService._internal();
+
+  factory FirebaseAuthService() {
+    return _instance;
+  }
+
+  static FirebaseAuthService get instance => _instance;
+
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: [
@@ -110,6 +123,20 @@ class FirebaseAuthService {
     } catch (e) {
       throw e;
     }
+  }
+
+  String? getUserUniqueId() {
+    if (_firebaseAuth.currentUser != null) {
+      return _firebaseAuth.currentUser!.uid;
+    } else {
+      return null;
+    }
+  }
+
+  String getUniqueFileName() {
+    var random = Random.secure();
+    var values = List<int>.generate(10, (i) => random.nextInt(255));
+    return base64UrlEncode(values);
   }
 }
 
