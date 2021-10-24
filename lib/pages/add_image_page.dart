@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:media_portfolio/services/firebase_storage_service.dart';
 
 class AddImagePage extends StatefulWidget {
   const AddImagePage({Key? key}) : super(key: key);
@@ -40,10 +42,19 @@ class _AddImagePageState extends State<AddImagePage> {
               Text(
                 'isAppUnderDevelopment : ${RemoteConfig.instance.getBool('is_app_underdevelopment')}',
               ),
-              Center(
-                child: Icon(
-                  CupertinoIcons.cloud_upload,
-                  size: 36,
+              GestureDetector(
+                onTap: () async {
+                  FirebaseStorageService storage = FirebaseStorageService();
+                  String? filePath = await storage.getFilePath();
+                  if (filePath != null) {
+                    storage.uploadFile(filePath);
+                  }
+                },
+                child: Center(
+                  child: Icon(
+                    CupertinoIcons.cloud_upload,
+                    size: 36,
+                  ),
                 ),
               ),
               Center(
